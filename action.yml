@@ -1,0 +1,36 @@
+name: GitHub Notion Project Sync
+description: Synchronize GitHub repository activity with a central Notion projects database.
+
+inputs:
+  notion_token:
+    description: Notion integration token.
+    required: true
+  notion_projects_data_source_id:
+    description: Notion data source ID for the central projects database.
+    required: true
+  github_token:
+    description: GitHub token used to read repository metadata.
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+
+    - name: Install dependencies
+      shell: bash
+      run: pip install -r "${{ github.action_path }}/requirements.txt"
+
+    - name: Sync GitHub to Notion
+      shell: bash
+      env:
+        NOTION_TOKEN: ${{ inputs.notion_token }}
+        NOTION_PROJECTS_DATA_SOURCE_ID: ${{ inputs.notion_projects_data_source_id }}
+        GH_TOKEN: ${{ inputs.github_token }}
+        GITHUB_REPOSITORY: ${{ github.repository }}
+        GITHUB_EVENT_NAME: ${{ github.event_name }}
+        GITHUB_EVENT_PATH: ${{ github.event_path }}
+      run: python "${{ github.action_path }}/src/main.py"

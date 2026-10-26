@@ -1,0 +1,26 @@
+name: Sync project to Notion
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  issues:
+    types: [opened, edited, closed, reopened]
+  pull_request:
+    types: [opened, edited, closed, reopened, synchronize]
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Run GitHub Notion Project Sync
+        uses: SEU_USUARIO/github-notion-project-sync@main
+        with:
+          notion_token: ${{ secrets.NOTION_TOKEN }}
+          notion_projects_data_source_id: SEU_DATA_SOURCE_ID
+          github_token: ${{ github.token }}
